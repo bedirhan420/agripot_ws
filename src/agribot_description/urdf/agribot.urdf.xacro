@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<robot name="agribot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find agribot_description)/urdf/agribot_arm.urdf.xacro"/>
+  <xacro:include filename="$(find agribot_description)/urdf/sensors.urdf.xacro"/>
+
+  <xacro:property name="chassis_len" value="0.9"/>
+  <xacro:property name="chassis_width" value="0.6"/>
+  <xacro:property name="chassis_height" value="0.3"/>
+  <xacro:property name="wheel_radius" value="0.15"/>
+  <xacro:property name="wheel_width" value="0.08"/>
+
+  <link name="base_footprint"/>
+
+  <link name="base_link">
+    <visual>
+      <geometry><box size="${chassis_len} ${chassis_width} ${chassis_height}"/></geometry>
+    </visual>
+    <collision>
+      <geometry><box size="${chassis_len} ${chassis_width} ${chassis_height}"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="40.0"/>
+      <inertia ixx="1.5" ixy="0" ixz="0" iyy="2.0" iyz="0" izz="2.0"/>
+    </inertial>
+  </link>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/><child link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <!--
+    Camur/engebeli zeminde tekerlek-zemin surtunmesi buradan degil,
+    Gazebo dunya dosyasindaki (agribot_simulation/worlds) zemin mesh
+    surface/friction (mu1, mu2) parametrelerinden yonetilir; boylece
+    ayni robot modeli farkli zemin senaryolarinda (asfalt/camur)
+    DEGISTIRILMEDEN yeniden kullanilabilir (Single Responsibility: robot
+    modeli kendi surtunme katsayisini "bilmez").
+  -->
+  <xacro:macro name="drive_wheel" params="prefix x_pos y_pos">
+    <link name="${prefix}_wheel_link">
+      <visual><geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry></visual>
+      <collision><geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry></collision>
+      <inertial><mass value="2.5"/><inertia ixx="0.02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.03"/></inertial>
+    </link>
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="base_link"/><child link="${prefix}_wheel_link"/>
+      <axis xyz="0 1 0"/>
+      <origin xyz="${x_pos} ${y_pos} ${-wheel_radius}" rpy="${-pi/2} 0 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:drive_wheel prefix="front_left"  x_pos="0.3"  y_pos="0.32"/>
+  <xacro:drive_wheel prefix="front_right" x_pos="0.3"  y_pos="-0.32"/>
+  <xacro:drive_wheel prefix="rear_left"   x_pos="-0.3" y_pos="0.32"/>
+  <xacro:drive_wheel prefix="rear_right"  x_pos="-0.3" y_pos="-0.32"/>
+
+  <!-- Kol, govdenin on-ust kismina monte edilir -->
+  <joint name="arm_mount_joint" type="fixed">
+    <parent link="base_link"/><child link="arm_link_1"/>
+    <origin xyz="0.35 0 0.2" rpy="0 0 0"/>
+  </joint>
+  <xacro:agribot_arm parent_link="base_link"/>
+
+  <xacro:agribot_rgbd_camera parent_link="base_link" xyz="0.45 0 0.25" rpy="0 0 0"/>
+  <xacro:agribot_imu parent_link="base_link" xyz="0 0 0.05"/>
+  <xacro:agribot_gps parent_link="base_link" xyz="0 0 0.35"/>
+
+  <!-- Diferansiyel-suruslu Gazebo eklentisi: tekerlek odometrisi (EKF girdisi) icin -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>front_left_wheel_joint</left_joint>
+      <left_joint>rear_left_wheel_joint</left_joint>
+      <right_joint>front_right_wheel_joint</right_joint>
+      <right_joint>rear_right_wheel_joint</right_joint>
+      <wheel_separation>0.64</wheel_separation>
+      <wheel_radius>${wheel_radius}</wheel_radius>
+      <odom_publish_frequency>50</odom_publish_frequency>
+      <topic>cmd_vel</topic>
+      <odom_topic>wheel/odometry</odom_topic>
+    </plugin>
+  </gazebo>
+
+</robot>

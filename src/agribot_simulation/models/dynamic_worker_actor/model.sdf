@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <actor name="dynamic_worker_actor">
+    <skin>
+      <filename>walk.dae</filename>
+      <scale>1.0</scale>
+    </skin>
+    <animation name="walking">
+      <filename>walk.dae</filename>
+      <interpolate_x>true</interpolate_x>
+    </animation>
+
+    <!--
+      Waypoint listesi YER TUTUCUDUR; gercek koordinatlar
+      dynamic_obstacle_spawner.py tarafindan, sıra araliklarina gore
+      hesaplanip <script><trajectory> icine enjekte edilir (SDF sablonu
+      Python'da string olarak doldurulup gz-sim'e spawn edilir).
+    -->
+    <script>
+      <loop>true</loop>
+      <auto_start>true</auto_start>
+      <trajectory id="0" type="walking">
+        <waypoint><time>0.0</time><pose>0 0 0 0 0 0</pose></waypoint>
+        <waypoint><time>10.0</time><pose>8 0 0 0 0 0</pose></waypoint>
+        <waypoint><time>20.0</time><pose>8 3 0 0 0 1.57</pose></waypoint>
+        <waypoint><time>30.0</time><pose>0 3 0 0 0 3.14</pose></waypoint>
+        <waypoint><time>40.0</time><pose>0 0 0 0 0 0</pose></waypoint>
+      </trajectory>
+    </script>
+  </actor>
+</sdf>

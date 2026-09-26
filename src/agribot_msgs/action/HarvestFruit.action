@@ -1,0 +1,21 @@
+# Goal: hasat edilecek hedef
+FruitDetection target
+---
+# Result
+uint8 result
+uint8 RESULT_SUCCESS=1
+uint8 RESULT_UNREACHABLE=2
+uint8 RESULT_FAILED_GRASP=3
+uint8 RESULT_FAILED_FORCE_THRESHOLD=4
+uint8 RESULT_FRUIT_DAMAGED=5
+float32 final_applied_force_n
+---
+# Feedback
+string current_phase
+string PHASE_APPROACHING="approaching"
+string PHASE_ALIGNING="aligning"
+string PHASE_GRASPING="grasping"
+string PHASE_APPLYING_FORCE="applying_force"
+string PHASE_VERIFYING="verifying"
+string PHASE_RETRACTING="retracting"
+float32 progress

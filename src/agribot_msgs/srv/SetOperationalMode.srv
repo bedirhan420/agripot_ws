@@ -1,0 +1,9 @@
+# Ust seviye orkestrasyon / operator arayuzu icin mod degistirme servisi.
+string mode
+string MODE_IDLE="idle"
+string MODE_AUTONOMOUS="autonomous"
+string MODE_PAUSED="paused"
+string MODE_RETURN_HOME="return_home"
+---
+bool accepted
+string current_mode

@@ -1,0 +1,11 @@
+std_msgs/Header header
+string target_id
+uint8 result
+uint8 RESULT_PENDING=0
+uint8 RESULT_SUCCESS=1
+uint8 RESULT_UNREACHABLE=2
+uint8 RESULT_FAILED_GRASP=3
+uint8 RESULT_FAILED_FORCE_THRESHOLD=4
+uint8 RESULT_FRUIT_DAMAGED=5
+uint8 RESULT_ABORTED=6
+float32 applied_force_n

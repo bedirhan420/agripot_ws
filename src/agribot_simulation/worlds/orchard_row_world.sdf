@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <world name="orchard_row_world">
+
+    <physics name="default_physics" type="dart">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"></plugin>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"></plugin>
+    <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"></plugin>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"></plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"></plugin>
+    <!-- DetachableJoint sistemi WORLD seviyesinde yuklenmelidir ki elma
+         modelleri icindeki plugin etkinlesebilsin. -->
+    <plugin filename="gz-sim-detachable-joint-system" name="gz::sim::systems::DetachableJoint"></plugin>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.9 0.9 0.85 1</diffuse>
+      <direction>-0.4 0.2 -0.9</direction>
+    </light>
+
+    <!-- Ana zemin (kuru, referans surtunme) -->
+    <include>
+      <uri>model://mud_ground_plane</uri>
+      <name>ground_dry</name>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <!--
+      Camurlu bolge ornegi: mud_ground_plane modeli, farkli mu1/mu2 ile
+      ikinci bir instance olarak eklenmistir (SDF <friction> degerleri
+      instance-bazinda override edilemedigi icin, gercek kullanimda bu
+      model her camur bolgesi icin ayri bir model.sdf varyanti -- ornegin
+      mud_ground_plane_wet -- olarak coklanir; asagidaki include bu
+      varyanti temsil eder, bkz. scripts/mud_friction_randomizer.py).
+    -->
+    <include>
+      <uri>model://mud_ground_plane</uri>
+      <name>ground_mud_patch_1</name>
+      <pose>6 0 0.001 0 0 0</pose>
+    </include>
+
+    <!-- Elma agaci sirasi: 8 agac, 2 metre araliklarla, tek bir koridor -->
+    <include><uri>model://apple_tree</uri><name>tree_row1_0</name><pose>2 1.5 0 0 0 0</pose></include>
+    <include><uri>model://apple_tree</uri><name>tree_row1_1</name><pose>4 1.5 0 0 0 0</pose></include>
+    <include><uri>model://apple_tree</uri><name>tree_row1_2</name><pose>6 1.5 0 0 0 0</pose></include>
+    <include><uri>model://apple_tree</uri><name>tree_row1_3</name><pose>8 1.5 0 0 0 0</pose></include>
+
+    <include><uri>model://apple_tree</uri><name>tree_row2_0</name><pose>2 -1.5 0 0 0 0</pose></include>
+    <include><uri>model://apple_tree</uri><name>tree_row2_1</name><pose>4 -1.5 0 0 0 0</pose></include>
+    <include><uri>model://apple_tree</uri><name>tree_row2_2</name><pose>6 -1.5 0 0 0 0</pose></include>
+    <include><uri>model://apple_tree</uri><name>tree_row2_3</name><pose>8 -1.5 0 0 0 0</pose></include>
+
+    <!--
+      Elmalar burada STATIK olarak listelenmez: gercek kullanimda
+      agribot_simulation/scripts/fruit_spawner.py, `gz service -s
+      /world/orchard_row_world/create` (ya da ros_gz_sim spawn_entity.py)
+      araciligiyla her agacin branch_link'i etrafina rastgele sayida
+      apple_fruit modeli spawn eder ve DetachableJoint'in <child_link>
+      alanini ilgili agacin adina gore ayarlar. Boylece meyve yogunlugu/
+      dagilimi kod degistirmeden (yalnizca script parametreleriyle)
+      degistirilebilir.
+    -->
+
+    <!-- Dinamik engel ornegi (Gazebo actor) -->
+    <include>
+      <uri>model://dynamic_worker_actor</uri>
+      <name>worker_1</name>
+      <pose>0 4 0 0 0 0</pose>
+    </include>
+
+  </world>
+</sdf>

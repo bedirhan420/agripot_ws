@@ -1,0 +1,6 @@
+# Navigasyon katmani, ulasilabilir bir meyve hedefi bulundugunda cagirir.
+FruitDetection target
+---
+bool plan_found
+float64 estimated_duration_sec
+string rejection_reason

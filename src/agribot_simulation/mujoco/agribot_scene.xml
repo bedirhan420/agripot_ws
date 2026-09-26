@@ -1,0 +1,53 @@
+<mujoco model="agribot_orchard_scene">
+  <!--
+    MuJoCo alternatif fizik ortami (proje dokumaninda "daha da iyisi"
+    olarak belirtilen mujoco_ros koprusu secenegi).
+
+    KIRILABILIR EKLEM MEKANIZMASI (MuJoCo'ya ozgu):
+    Elma-dal baglantisi bir <equality><weld .../> kisiti olarak tanimlanir.
+    Runtime'da bu kisit, `mj_data.eq_active[i] = 0` atamasiyla devre disi
+    birakilarak "kirilir". Varsayilan mujoco_ros koprusu bu degeri disariya
+    ACMAZ; agribot_simulation/backends/mujoco_backend.py'nin break_joint()
+    metodunun calismasi icin mujoco_ros'a kucuk bir servis eklentisi
+    (/mujoco/set_equality_active) EKLENMELIDIR (bkz. docs/ARCHITECTURE.md).
+  -->
+  <compiler angle="radian"/>
+  <option timestep="0.001" gravity="0 0 -9.81"/>
+
+  <default>
+    <geom friction="0.9 0.9 0.005"/>
+  </default>
+
+  <worldbody>
+    <light diffuse="0.8 0.8 0.8" pos="0 0 6" dir="0 0 -1"/>
+
+    <!-- Zemin: friction RUNTIME'DA degistirilebilir (Gazebo'ya gore avantaj) -->
+    <geom name="ground" type="plane" size="15 5 0.1" friction="0.9 0.9 0.005" rgba="0.35 0.25 0.15 1"/>
+
+    <!-- Ornek bir agac + elma (dal-govde WELD kisiti = "kirilabilir eklem") -->
+    <body name="tree_1" pos="2 1.5 0">
+      <geom type="cylinder" size="0.08 0.6" pos="0 0 0.6" rgba="0.4 0.25 0.1 1"/>
+      <body name="branch_1" pos="0 0 1.6">
+        <geom type="sphere" size="0.6" rgba="0.15 0.45 0.15 0.5" contype="0" conaffinity="0"/>
+      </body>
+    </body>
+
+    <body name="apple_1" pos="2.3 1.5 1.7">
+      <freejoint/>
+      <geom name="apple_1_geom" type="sphere" size="0.04" mass="0.15" rgba="0.7 0.05 0.05 1"/>
+    </body>
+  </worldbody>
+
+  <equality>
+    <!--
+      "apple_1"i "branch_1"e sabitleyen weld kisiti. Kopma aninda
+      mujoco_ros servisi bu ismi kullanarak eq_active=0 yapar.
+    -->
+    <weld name="apple_1_breakable_joint" body1="apple_1" body2="branch_1" active="true"/>
+  </equality>
+
+  <sensor>
+    <!-- Kavrama kuvvetini izlemek icin (gercek projede end-effector gövdesine eklenir) -->
+    <force name="gripper_force_sensor" site="gripper_site"/>
+  </sensor>
+</mujoco>

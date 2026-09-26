@@ -1,0 +1,31 @@
+# mujoco_ros koprusu icin ornek konfigurasyon.
+#
+# ONEMLI: mujoco_ros'un farkli dagitimlari (ornegin ubi-agni/mujoco_ros2,
+# bit-bots fork'lari) YAML semasi FARKLILIK GOSTEREBILIR. Alan adlarini
+# kullandiginiz paketin dokumantasyonuna gore guncelleyin; bu dosya
+# genel bir sablon/BASLANGIC NOKTASIDIR.
+
+mujoco_ros:
+  ros__parameters:
+    model_path: "install/agribot_simulation/share/agribot_simulation/mujoco/agribot_scene.xml"
+    use_sim_time: true
+    publish_rate_hz: 100.0
+
+    sensors:
+      - name: "gripper_force_sensor"
+        topic: "/agribot/end_effector/force"
+        msg_type: "geometry_msgs/WrenchStamped"
+
+    actuators:
+      - name: "arm_joint_1"
+        topic: "/agribot/arm/joint1/effort_cmd"
+      - name: "arm_joint_2"
+        topic: "/agribot/arm/joint2/effort_cmd"
+
+    # ozel eklenti (henuz gelistirilmedi -- ROADMAP Faz 6):
+    custom_services:
+      - name: "set_equality_active"
+        service: "/mujoco/set_equality_active"
+        description: >
+          Kirilabilir eklem mekanizmasi icin gerekli; equality constraint
+          adini alir ve mj_data.eq_active degerini 0/1 yapar.

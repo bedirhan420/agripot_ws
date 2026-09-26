@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug: perception_node",
+      "type": "python",
+      "request": "launch",
+      "module": "agribot_perception.nodes.perception_node",
+      "console": "integratedTerminal",
+      "env": { "PYTHONPATH": "${workspaceFolder}/install/agribot_perception/lib/python3.10/site-packages" }
+    },
+    {
+      "name": "Debug: navigation_manager_node",
+      "type": "python",
+      "request": "launch",
+      "module": "agribot_navigation.nodes.navigation_manager_node",
+      "console": "integratedTerminal"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+# YER TUTUCUDUR. Gercek dosya MoveIt Setup Assistant tarafindan
+# agribot_description/urdf/agribot_arm.urdf.xacro'daki "agribot_arm"
+# planning group'una gore uretilmelidir (bkz. ROADMAP Faz 7).
+move_group:
+  ros__parameters:
+    planning_plugins: ["ompl_interface/OMPLPlanner"]
+    default_planning_pipeline: "ompl"
+    capabilities: ""

@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- RGB-D kamera: sira takibi (point cloud) ve YOLOv8 girisi icin -->
+  <xacro:macro name="agribot_rgbd_camera" params="parent_link xyz rpy">
+    <link name="camera_link">
+      <visual>
+        <geometry><box size="0.03 0.09 0.025"/></geometry>
+      </visual>
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5"/>
+      </inertial>
+    </link>
+    <joint name="camera_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="camera_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+    <link name="camera_optical_frame"/>
+    <joint name="camera_optical_joint" type="fixed">
+      <parent link="camera_link"/>
+      <child link="camera_optical_frame"/>
+      <!-- REP-103: optik cerceve donusumu (Z ileri -> X ileri) -->
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <gazebo reference="camera_link">
+      <sensor name="rgbd_camera" type="rgbd_camera">
+        <camera>
+          <horizontal_fov>1.211</horizontal_fov>
+          <image><width>640</width><height>480</height></image>
+          <clip><near>0.1</near><far>8.0</far></clip>
+        </camera>
+        <always_on>true</always_on>
+        <update_rate>15</update_rate>
+        <topic>camera</topic>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- IMU: EKF sensor fuzyonu icin -->
+  <xacro:macro name="agribot_imu" params="parent_link xyz">
+    <link name="imu_link">
+      <inertial><mass value="0.01"/><inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/></inertial>
+    </link>
+    <joint name="imu_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="imu_link"/>
+      <origin xyz="${xyz}" rpy="0 0 0"/>
+    </joint>
+    <gazebo reference="imu_link">
+      <sensor name="imu_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>100</update_rate>
+        <topic>imu</topic>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- GPS (NavSat): proje dokumaninda vurgulandigi uzere HER ZAMAN guvenilir
+       degildir; gurultu modeli kasitli olarak yuksek tutulmustur, boylece
+       EKF/State Pattern'in GPS'e ne zaman "az guvenmesi" gerektigi test edilebilir. -->
+  <xacro:macro name="agribot_gps" params="parent_link xyz">
+    <link name="gps_link">
+      <inertial><mass value="0.01"/><inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/></inertial>
+    </link>
+    <joint name="gps_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="gps_link"/>
+      <origin xyz="${xyz}" rpy="0 0 0"/>
+    </joint>
+    <gazebo reference="gps_link">
+      <sensor name="navsat_sensor" type="navsat">
+        <always_on>true</always_on>
+        <update_rate>5</update_rate>
+        <topic>gps/fix</topic>
+        <!-- Agac orti altinda sinyal bozulmasini taklit etmek icin gurultu
+             ROS2 tarafinda ek bir "canopy_gps_noise" node'u ile de artirilabilir. -->
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

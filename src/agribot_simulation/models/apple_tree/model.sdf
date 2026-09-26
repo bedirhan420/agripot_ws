@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="apple_tree">
+    <static>true</static>
+
+    <link name="trunk_link">
+      <visual name="trunk_visual">
+        <geometry><cylinder><radius>0.08</radius><length>1.2</length></cylinder></geometry>
+        <material><ambient>0.4 0.25 0.1 1</ambient><diffuse>0.4 0.25 0.1 1</diffuse></material>
+      </visual>
+      <collision name="trunk_collision">
+        <geometry><cylinder><radius>0.08</radius><length>1.2</length></cylinder></geometry>
+      </collision>
+      <pose>0 0 0.6 0 0 0</pose>
+    </link>
+
+    <!-- Meyvelerin baglanacagi referans cerceve; gercek TASARIMDA Blender'daki
+         dal geometrisine karsilik gelen birden fazla branch_link olabilir. -->
+    <link name="branch_link">
+      <visual name="canopy_visual">
+        <geometry><sphere><radius>0.6</radius></sphere></geometry>
+        <material><ambient>0.15 0.45 0.15 1</ambient><diffuse>0.15 0.45 0.15 1</diffuse></material>
+      </visual>
+      <collision name="canopy_collision">
+        <geometry><sphere><radius>0.6</radius></sphere></geometry>
+      </collision>
+      <pose>0 0 1.6 0 0 0</pose>
+    </link>
+
+    <joint name="trunk_to_branch" type="fixed">
+      <parent>trunk_link</parent>
+      <child>branch_link</child>
+    </joint>
+  </model>
+</sdf>

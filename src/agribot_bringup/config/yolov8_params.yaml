@@ -1,0 +1,9 @@
+perception_node:
+  ros__parameters:
+    detector_type: "yolov8"
+    weights_path: "/opt/agribot/models/apple_yolov8.pt"
+    device: "cuda:0"
+    confidence_threshold: 0.5
+    rgb_topic: "/camera/color/image_raw"
+    depth_topic: "/camera/depth/image_rect_raw"
+    camera_info_topic: "/camera/color/camera_info"
